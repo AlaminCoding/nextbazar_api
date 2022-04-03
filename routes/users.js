@@ -41,6 +41,17 @@ router.delete("/:userId", verify, async (req, res) => {
   }
 });
 
+// GET ONE USER
+router.get("/:userId", verify, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    const { password, ...info } = user._doc;
+    res.status(200).json(info);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 //GET ALL Users
 router.get("/", verify, async (req, res) => {
   if (req.user.isAdmin) {
@@ -50,6 +61,9 @@ router.get("/", verify, async (req, res) => {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(500).json("You are not admin");
   }
 });
+
 module.exports = router;
