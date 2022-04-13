@@ -53,16 +53,12 @@ router.get("/:userId", verify, async (req, res) => {
 });
 
 //GET ALL Users
-router.get("/", verify, async (req, res) => {
-  if (req.user.isAdmin) {
-    try {
-      const users = await User.find();
-      res.status(200).json(users);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  } else {
-    res.status(500).json("You are not admin");
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 

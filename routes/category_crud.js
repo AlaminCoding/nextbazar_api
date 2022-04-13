@@ -18,12 +18,12 @@ router.post("/addcategory", verify, async (req, res) => {
 });
 
 //GET ALL CATEGORY
-router.get("/", verify, async (req, res) => {
-  if (req.user.isAdmin) {
+router.get("/", async (req, res) => {
+  try {
     const allCategory = await Category.find();
     res.status(200).json(allCategory);
-  } else {
-    res.status(500).json("You are not admin");
+  } catch (err) {
+    res.status(500).json("Something Wrong, Muri Khao");
   }
 });
 
