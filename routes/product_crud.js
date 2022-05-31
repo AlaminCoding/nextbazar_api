@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const Product = require("../models/product");
-const verify = require("../verifyToken");
+const verify = require("../utils/verifyToken");
 //ADD PPRODUCT
-router.post("/addproduct", verify, async (req, res) => {
+router.post("/addproduct", async (req, res) => {
   const {
     name,
     image,
@@ -10,7 +10,7 @@ router.post("/addproduct", verify, async (req, res) => {
     description,
     rating,
     price,
-    onsell,
+    onSell,
     sellPrice,
     count,
     sellCount,
@@ -24,20 +24,27 @@ router.post("/addproduct", verify, async (req, res) => {
     description: description,
     rating: rating,
     price: price,
-    onSell: onsell,
+    onSell: onSell,
     sellPrice: sellPrice,
     count: count,
     sellCount: sellCount,
     favourite: favourite,
     active: active,
   });
-  if (req.user.isAdmin) {
-    try {
-      const product = await newProduct.save();
-      res.status(200).json(product);
-    } catch (err) {
-      res.status(500).json("You are not admin");
-    }
+  // if (req.user.isAdmin) {
+  //   try {
+  //     const product = await newProduct.save();
+  //     res.status(200).json(product);
+  //   } catch (err) {
+  //     res.status(500).json("You are not admin");
+  //   }
+  // }
+
+  try {
+    const product = await newProduct.save();
+    res.status(200).json(product);
+  } catch (err) {
+    res.status(500).json("You are not admin");
   }
 });
 
@@ -63,34 +70,29 @@ router.get("/", async (req, res) => {
 });
 
 //UPDATE A PRODUCT
-router.put("/update/:productId", verify, async (req, res) => {
+router.put("/update/:productId", async (req, res) => {
   const productId = req.params.productId;
   try {
-    if (req.user.isAdmin) {
-      const updatedProduct = await Product.findByIdAndUpdate(
-        productId,
-        { $set: req.body },
-        { new: true }
-      );
-      res.status(200).json(updatedProduct);
-    } else {
-      res.status(500).json("You are not admin");
-    }
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { $set: req.body },
+      { new: true }
+    );
+    res.status(200).json(updatedProduct);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
 //PRODUCT DELETE
-router.delete("/delete/:productId", verify, async (req, res) => {
+router.delete("/delete/:productId", async (req, res) => {
   const productId = req.params.productId;
   try {
-    if (req.user.isAdmin) {
-      const deletedProduct = await Product.findByIdAndDelete(productId);
-      res.status(200).json("Product Deleted");
-    }
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+    res.status(200).json("Product Deleted");
   } catch (err) {
     res.status(500).json(err);
   }
 });
+
 module.exports = router;
